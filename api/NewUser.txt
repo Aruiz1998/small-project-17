@@ -1,0 +1,62 @@
+
+<?php
+
+	$inData = getRequestInfo();
+	
+	$id = 0;
+	$firstName = "";
+	$lastName = "";
+
+	$conn = new mysqli("161.35.140.80", "TheBeast", "WeLoveCOP4331", "COP4331"); 	
+	if( $conn->connect_error )
+	{
+		returnWithError( $conn->connect_error );
+	}
+	else
+	{
+		$stmtUser = $conn->prepare(INSERT INTO Users (FirstName, LastName, Login, Password) VALUES (?,?,?,?));
+		$stmtUser->bind_param("ssss", $inData["fName"], $inData["lName"], $inData["email"], $inData["password"]);
+		$stmtUser->execute();
+		$result = $stmtUser->get_result();
+
+		if( $row = $result->fetch_assoc()  )
+		{
+			returnWithInfo( $row['FirstName'], $row['LastName'], $row['Login'], $row['Password']);
+		}
+		else
+		{
+			returnWithError("No Records Found");
+		}
+
+		$stmtContacts = $conn->prepare(Create Table ?? (FirstName varchar(255), LastName varchar(255), email varchar(255), phone varchar(255)));
+		$stmtContacts->bind_param("ss", $inData["fName"], $inData["lName"]);
+
+		$stmtUser->close();
+		$stmtContacts->close();
+		$conn->close();
+	}
+	
+	function getRequestInfo()
+	{
+		return json_decode(file_get_contents('php://input'), true);
+	}
+
+	function sendResultInfoAsJson( $obj )
+	{
+		header('Content-type: application/json');
+		echo $obj;
+	}
+	
+	function returnWithError( $err )
+	{
+		$retValue = '{"id":0,"firstName":"","lastName":"","error":"' . $err . '"}';
+		sendResultInfoAsJson( $retValue );
+	}
+	
+	function returnWithInfo( $firstName, $lastName, $id )
+	{
+		$retValue = '{"id":' . $id . ',"firstName":"' . $firstName . '","lastName":"' . $lastName . '","error":""}';
+		sendResultInfoAsJson( $retValue );
+	}
+	
+?>
