@@ -19,14 +19,14 @@ if (!$conn) {
 }
 
 //Required fields
-if ($data->valToSearch == ""){
+if ($data->valToSearch == "" or $data->UserEmail == ""){
   http_response_code(404);
   echo "A field was left blank";
   exit();
 }
 
 //Package all contacts for a user into JSON
-$sql = 'SELECT * FROM Contacts WHERE UserEmail LIKE "%'.$data->valToSearch.'%" OR FName LIKE "%'.$data->valToSearch.'%" OR LName LIKE "%'.$data->valToSearch.'%" OR PhoneNumber LIKE "%'.$data->valToSearch.'%" OR ContactEmail LIKE "%'.$data->valToSearch.'%"';
+$sql = 'SELECT * FROM Contacts WHERE UserEmail="'.$data->UserEmail.'" AND (FName LIKE "%'.$data->valToSearch.'%" OR LName LIKE "%'.$data->valToSearch.'%" OR PhoneNumber LIKE "%'.$data->valToSearch.'%" OR ContactEmail LIKE "%'.$data->valToSearch.'%")';
 
 if($result2 = mysqli_query($conn, $sql)){
   $rows = mysqli_num_rows($result2);
