@@ -26,8 +26,7 @@ if ($data->valToSearch == "" or $data->UserEmail == ""){
 }
 
 //Package all contacts for a user into JSON
-$sql = 'SELECT * FROM Contacts WHERE UserEmail="'.$data->UserEmail.'" AND (FName LIKE "%'.$data->valToSearch.'%" OR LName LIKE "%'.$data->valToSearch.'%" OR PhoneNumber LIKE "%'.$data->valToSearch.'%" OR ContactEmail LIKE "%'.$data->valToSearch.'%")';
-
+$sql = 'SELECT * FROM Contacts WHERE UserEmail="'.$data->UserEmail.'" AND (FName LIKE "%'.$data->valToSearch.'%" OR LName LIKE "%'.$data->valToSearch.'%" OR PhoneNumber LIKE "%'.$data->valToSearch.'%" OR ContactEmail LIKE "%'.$data->valToSearch.'%") ORDER BY CASE WHEN FName LIKE "'.$data->valToSearch.'%" THEN 1 WHEN LName LIKE "'.$data->valToSearch.'%" THEN 2 WHEN PhoneNumber LIKE "'.$data->valToSearch.'%" THEN 3 WHEN ContactEmail LIKE "'.$data->valToSearch.'%" THEN 4 ELSE 5 END';
 if($result2 = mysqli_query($conn, $sql)){
   $rows = mysqli_num_rows($result2);
   $return = array();
